@@ -11,13 +11,9 @@ import CoreLocation
 import SnapKit
 
 class ViewController: UIViewController {
-    var graphView: UIView = {
-        $0.backgroundColor = UIColor(hex: "#ddddddff")
-        $0.layer.cornerRadius = 60.0
-        return $0
-    } (UIView())
     
-    var planView: UIView = {
+    // ANALYTICS
+    var graphView: UIView = {
         $0.backgroundColor = UIColor(hex: "#ddddddff")
         $0.layer.cornerRadius = 60.0
         return $0
@@ -29,11 +25,49 @@ class ViewController: UIViewController {
         return $0
     } (UIButton())
     
+    var graphLabel: UILabel = {
+        $0.text = "Analytics"
+        $0.font = UIFont(name: "Avenir-Light", size: 20.0)
+        return $0
+    } (UILabel())
+    
+    // MY PLAN
+    var planView: UIView = {
+        $0.backgroundColor = UIColor(hex: "#ddddddff")
+        $0.layer.cornerRadius = 60.0
+        return $0
+    } (UIView())
+    
     var planButton: UIButton = {
         $0.alpha = 1.0
         $0.setImage(#imageLiteral(resourceName: "form"), for: UIControl.State.normal)
         return $0
     } (UIButton())
+    
+    var planLabel: UILabel = {
+        $0.text = "My Plan"
+        $0.font = UIFont(name: "Avenir-Light", size: 20.0)
+        return $0
+    } (UILabel())
+    
+    // EXPENSES
+    var expenseView: UIView = {
+        $0.backgroundColor = UIColor(hex: "#ddddddff")
+        $0.layer.cornerRadius = 60.0
+        return $0
+    } (UIView())
+    
+    var expenseButton: UIButton = {
+        $0.alpha = 1.0
+        $0.setImage(#imageLiteral(resourceName: "form"), for: UIControl.State.normal)
+        return $0
+    } (UIButton())
+    
+    var expenseLabel: UILabel = {
+        $0.text = "Expenses"
+        $0.font = UIFont(name: "Avenir-Light", size: 20.0)
+        return $0
+    } (UILabel())
     
     lazy var monthHeader: UILabel = {
         $0.text = getCurrentMonth()
@@ -92,27 +126,32 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor(hex: "#cfffe5ff")
+        
         view.addSubview(graphView)
         view.addSubview(planView)
         view.addSubview(monthView)
         view.addSubview(daysRemainingLabel)
+        
+        view.addSubview(planLabel)
+        view.addSubview(graphLabel)
+        view.addSubview(expenseView)
+        view.addSubview(expenseLabel)
+        
         graphView.addSubview(graphButton)
         planView.addSubview(planButton)
+        expenseView.addSubview(expenseButton)
+        
         monthView.addSubview(monthHeader)
+        
         setupConstraints()
-        view.bringSubviewToFront(monthView)
+        //view.bringSubviewToFront(monthView)
     }
     
     func setupConstraints() {
         
+        // GRAPH
         graphView.snp.makeConstraints { (make) in
             make.center.equalToSuperview().inset(-80)
-            make.height.width.equalTo(120)
-        }
-        
-        planView.snp.makeConstraints { (make) in
-            make.centerX.equalToSuperview().offset(80)
-            make.centerY.equalToSuperview().offset(-80)
             make.height.width.equalTo(120)
         }
         
@@ -120,8 +159,44 @@ class ViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         
+        graphLabel.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview().offset(-80)
+            make.top.equalTo(graphView.snp_bottom).offset(4)
+            make.height.equalTo(20)
+        }
+        
+        // MY PLAN
+        planView.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview().offset(80)
+            make.centerY.equalToSuperview().offset(-80)
+            make.height.width.equalTo(120)
+        }
+        
         planButton.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+        }
+        
+        planLabel.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview().offset(80)
+            make.top.equalTo(planView.snp_bottom).offset(4)
+            make.height.equalTo(20)
+        }
+        
+        // EXPENSES
+        expenseView.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview().offset(-80)
+            make.centerY.equalToSuperview().offset(80)
+            make.height.width.equalTo(120)
+        }
+        
+        expenseButton.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        
+        expenseLabel.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview().offset(-80)
+            make.top.equalTo(expenseView.snp_bottom).offset(4)
+            make.height.equalTo(20)
         }
         
         monthView.snp.makeConstraints { (make) in
