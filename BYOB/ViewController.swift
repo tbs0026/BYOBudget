@@ -69,6 +69,7 @@ class ViewController: UIViewController {
         return $0
     } (UILabel())
     
+    // HEADER
     lazy var monthHeader: UILabel = {
         $0.text = getCurrentMonth()
         $0.textColor = .black
@@ -82,17 +83,42 @@ class ViewController: UIViewController {
         return $0
     } (UIView())
     
+    lazy var progressBarLayer: CAShapeLayer = {
+        $0.strokeColor = UIColor.green.cgColor
+        $0.lineWidth = 8
+        createProgressLayout(bezierIn: $0)
+        $0.strokeEnd = 0
+        return $0
+    } (CAShapeLayer())
+    
     lazy var daysRemainingLabel: UILabel = {
         $0.text = "There are " + getDaysRemaining() + " days left in " + getCurrentMonth() + " ($" + " per day)"
         $0.font = UIFont(name: "Avenir-Medium", size: 15.0)
         return $0
     } (UILabel())
     
+    // FUNCTIONS
     func getCurrentMonth() -> String {
         let formatterMonth = DateFormatter()
         formatterMonth.dateFormat = "MMMM"
         let dateMonth = formatterMonth.string(from: Date())
         return dateMonth
+    }
+    
+    func createProgressLayout(bezierIn: CAShapeLayer) {
+        let yAxis: CGFloat
+        let radiusIn: CGFloat
+        if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
+            yAxis = 190
+            radiusIn = 50
+        } else {
+            yAxis = 150
+            radiusIn = 40
+        }
+        let xAxis: CGFloat = UIScreen.main.bounds.width/2
+        let center = CGPoint(x: xAxis, y: yAxis)
+        let circularPath = UIBezierPath(arcCenter: center, radius: radiusIn, startAngle: -CGFloat.pi / 2, endAngle: 3 / 2 * CGFloat.pi, clockwise: true)
+        bezierIn.path = circularPath.cgPath
     }
     
     func daysPerMonth() -> Int {
@@ -137,21 +163,39 @@ class ViewController: UIViewController {
         view.addSubview(expenseView)
         view.addSubview(expenseLabel)
         
+        view.layer.addSublayer(progressBarLayer)
+        
         graphView.addSubview(graphButton)
         planView.addSubview(planButton)
         expenseView.addSubview(expenseButton)
         
+        view.addGestureRecognizer(UITapGestureRecognizer(target: progressBarLayer, action: #selector(animateProgressBar)))
         monthView.addSubview(monthHeader)
-        
+        animateProgressBar()
         setupConstraints()
         //view.bringSubviewToFront(monthView)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(false)
+        animateProgressBar()
+    }
+    
+    @objc func animateProgressBar() {
+        print("print")
+        let animation = CABasicAnimation(keyPath: "stroke")
+        animation.toValue = 1
+        animation.duration = 2
+        animation.isRemovedOnCompletion = false
+        progressBarLayer.add(animation, forKey: "circularAnimation")
     }
     
     func setupConstraints() {
         
         // GRAPH
         graphView.snp.makeConstraints { (make) in
-            make.center.equalToSuperview().inset(-80)
+            make.centerX.equalToSuperview().inset(-80)
+            make.centerY.equalToSuperview().offset(-30)
             make.height.width.equalTo(120)
         }
         
@@ -168,7 +212,7 @@ class ViewController: UIViewController {
         // MY PLAN
         planView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview().offset(80)
-            make.centerY.equalToSuperview().offset(-80)
+            make.centerY.equalToSuperview().offset(-30)
             make.height.width.equalTo(120)
         }
         
@@ -185,7 +229,7 @@ class ViewController: UIViewController {
         // EXPENSES
         expenseView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview().offset(-80)
-            make.centerY.equalToSuperview().offset(80)
+            make.centerY.equalToSuperview().offset(130)
             make.height.width.equalTo(120)
         }
         
@@ -214,7 +258,7 @@ class ViewController: UIViewController {
         }
         
         daysRemainingLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(monthView.snp_bottom)
+            make.bottom.equalTo(planView.snp_top).offset(-4)
             make.centerX.equalToSuperview()
         }
         
