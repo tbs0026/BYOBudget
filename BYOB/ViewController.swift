@@ -15,7 +15,11 @@ class ViewController: UIViewController {
     // ANALYTICS
     var graphView: UIView = {
         $0.backgroundColor = UIColor(hex: "#ddddddff")
-        $0.layer.cornerRadius = 60.0
+        if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
+            $0.layer.cornerRadius = 60.0
+        } else {
+            $0.layer.cornerRadius = 50.0
+        }
         return $0
     } (UIView())
     
@@ -34,7 +38,11 @@ class ViewController: UIViewController {
     // MY PLAN
     var planView: UIView = {
         $0.backgroundColor = UIColor(hex: "#ddddddff")
-        $0.layer.cornerRadius = 60.0
+        if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
+            $0.layer.cornerRadius = 60.0
+        } else {
+            $0.layer.cornerRadius = 50.0
+        }
         return $0
     } (UIView())
     
@@ -53,7 +61,11 @@ class ViewController: UIViewController {
     // EXPENSES
     var expenseView: UIView = {
         $0.backgroundColor = UIColor(hex: "#ddddddff")
-        $0.layer.cornerRadius = 60.0
+        if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
+            $0.layer.cornerRadius = 60.0
+        } else {
+            $0.layer.cornerRadius = 50.0
+        }
         return $0
     } (UIView())
     
@@ -83,11 +95,24 @@ class ViewController: UIViewController {
         return $0
     } (UIView())
     
-    lazy var progressBarLayer: CAShapeLayer = {
+    lazy var progressBar: CAShapeLayer = {
+        $0.fillColor = UIColor.clear.cgColor
         $0.strokeColor = UIColor.green.cgColor
-        $0.lineWidth = 8
+        $0.lineWidth = 10
+        $0.lineCap = .round
         createProgressLayout(bezierIn: $0)
-        $0.strokeEnd = 0
+        $0.strokeStart = 0
+        $0.strokeEnd = 0.02
+        return $0
+    } (CAShapeLayer())
+    
+    lazy var progressBarBackground: CAShapeLayer = {
+        $0.fillColor = UIColor.clear.cgColor
+        $0.strokeColor = UIColor.lightGray.cgColor
+        $0.lineWidth = 10
+        createProgressLayout(bezierIn: $0)
+        $0.strokeStart = 0
+        $0.strokeEnd = 1
         return $0
     } (CAShapeLayer())
     
@@ -108,9 +133,12 @@ class ViewController: UIViewController {
     func createProgressLayout(bezierIn: CAShapeLayer) {
         let yAxis: CGFloat
         let radiusIn: CGFloat
-        if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
+        if UIDevice.modelName.contains("Plus") {
             yAxis = 190
             radiusIn = 50
+        } else if UIDevice.modelName.contains("X") {
+            yAxis = 220
+            radiusIn = 70
         } else {
             yAxis = 150
             radiusIn = 40
@@ -163,40 +191,60 @@ class ViewController: UIViewController {
         view.addSubview(expenseView)
         view.addSubview(expenseLabel)
         
-        view.layer.addSublayer(progressBarLayer)
+        view.layer.addSublayer(progressBarBackground)
+        view.layer.addSublayer(progressBar)
         
         graphView.addSubview(graphButton)
         planView.addSubview(planButton)
         expenseView.addSubview(expenseButton)
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: progressBarLayer, action: #selector(animateProgressBar)))
+        
         monthView.addSubview(monthHeader)
-        animateProgressBar()
         setupConstraints()
         //view.bringSubviewToFront(monthView)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(false)
-        animateProgressBar()
+        animateProgressBar(toPercentage: 0.75)
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+//            self.animateProgressBar(toPercentage: 0.7)
+//        }
     }
     
-    @objc func animateProgressBar() {
+    func animateProgressBar(toPercentage percentage: CGFloat) {
         print("print")
-        let animation = CABasicAnimation(keyPath: "stroke")
-        animation.toValue = 1
+        let fromValue = progressBar.strokeEnd
+        progressBar.strokeEnd = percentage
+        
+        let animation = CABasicAnimation(keyPath: "strokeEnd")
+        animation.fromValue = fromValue
+        animation.toValue = percentage //+ 0.02
         animation.duration = 2
-        animation.isRemovedOnCompletion = false
-        progressBarLayer.add(animation, forKey: "circularAnimation")
+        let bounce = CABasicAnimation(keyPath: "strokeEnd")
+        bounce.fromValue = percentage + 0.02
+        bounce.toValue = percentage
+        
+        let group = CAAnimationGroup()
+        group.animations = [animation, bounce]
+        progressBar.add(animation, forKey: "animateStroke")
     }
     
     func setupConstraints() {
         
         // GRAPH
         graphView.snp.makeConstraints { (make) in
-            make.centerX.equalToSuperview().inset(-80)
-            make.centerY.equalToSuperview().offset(-30)
-            make.height.width.equalTo(120)
+            if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
+                make.centerX.equalToSuperview().inset(-80)
+                make.centerY.equalToSuperview().offset(-30)
+                make.height.width.equalTo(120)
+            } else {
+                make.centerX.equalToSuperview().inset(-70)
+                make.centerY.equalToSuperview().offset(-20)
+                make.height.width.equalTo(100)
+                
+            }
+            
         }
         
         graphButton.snp.makeConstraints { (make) in
@@ -211,9 +259,15 @@ class ViewController: UIViewController {
         
         // MY PLAN
         planView.snp.makeConstraints { (make) in
-            make.centerX.equalToSuperview().offset(80)
-            make.centerY.equalToSuperview().offset(-30)
-            make.height.width.equalTo(120)
+            if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
+                make.centerX.equalToSuperview().offset(80)
+                make.centerY.equalToSuperview().offset(-30)
+                make.height.width.equalTo(120)
+            } else {
+                make.centerX.equalToSuperview().offset(70)
+                make.centerY.equalToSuperview().offset(-20)
+                make.height.width.equalTo(100)
+            }
         }
         
         planButton.snp.makeConstraints { (make) in
@@ -228,9 +282,15 @@ class ViewController: UIViewController {
         
         // EXPENSES
         expenseView.snp.makeConstraints { (make) in
-            make.centerX.equalToSuperview().offset(-80)
-            make.centerY.equalToSuperview().offset(130)
-            make.height.width.equalTo(120)
+            if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
+                make.centerX.equalToSuperview().offset(-80)
+                make.centerY.equalToSuperview().offset(130)
+                make.height.width.equalTo(120)
+            } else {
+                make.centerX.equalToSuperview().offset(-70)
+                make.centerY.equalToSuperview().offset(120)
+                make.height.width.equalTo(100)
+            }
         }
         
         expenseButton.snp.makeConstraints { (make) in
