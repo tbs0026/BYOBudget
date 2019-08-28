@@ -13,6 +13,12 @@ import SnapKit
 class AnalyticsController: UIViewController {
     
     var navBar: UINavigationBar = {
+        let navig = UINavigationBar()
+        navig.backgroundColor = .mint
+        $0.increaseSize(100)
+        //navig.heightAnchor = 100(NSLayoutDimension)
+        //navig.titleTextAttributes = [NSExtensionItemAttributedTitleKey: "Analytics"]
+        $0.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
         $0.barTintColor = .mint
         $0.isHidden = false
         return $0
