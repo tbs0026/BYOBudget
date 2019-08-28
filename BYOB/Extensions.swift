@@ -36,6 +36,10 @@ extension UIColor {
     }
 }
 
+public extension UIColor {
+    static let mint: UIColor = UIColor(hex: "#cfffe5ff")!
+}
+
 public extension UIDevice {
     static let modelName: String = {
         var systemInfo = utsname()

@@ -201,7 +201,29 @@ class ViewController: UIViewController {
         
         monthView.addSubview(monthHeader)
         setupConstraints()
+        setupButtons()
         //view.bringSubviewToFront(monthView)
+    }
+    
+    func setupButtons() {
+        graphButton.addTarget(self, action: #selector(self.analyticsPressed), for: .touchUpInside)
+        planButton.addTarget(self, action: #selector(self.myPlanPressed), for: .touchUpInside)
+        expenseButton.addTarget(self, action: #selector(self.expensesPressed), for: .touchUpInside)
+    }
+    
+    @objc func analyticsPressed() {
+        let analytics = AnalyticsController()
+        self.present(analytics, animated: true, completion: nil)
+    }
+    
+    @objc func myPlanPressed() {
+        let myPlan = MyPlanController()
+        self.present(myPlan, animated: true, completion: nil)
+    }
+    
+    @objc func expensesPressed() {
+        let expenses = ExpensesController()
+        self.present(expenses, animated: true, completion: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
