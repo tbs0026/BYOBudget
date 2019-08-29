@@ -15,11 +15,7 @@ class ViewController: UIViewController {
     // ANALYTICS
     var graphView: UIView = {
         $0.backgroundColor = UIColor(hex: "#ddddddff")
-        if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
-            $0.layer.cornerRadius = 60.0
-        } else {
-            $0.layer.cornerRadius = 50.0
-        }
+        $0.layer.cornerRadius = 55.0
         return $0
     } (UIView())
     
@@ -38,11 +34,7 @@ class ViewController: UIViewController {
     // MY PLAN
     var planView: UIView = {
         $0.backgroundColor = UIColor(hex: "#ddddddff")
-        if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
-            $0.layer.cornerRadius = 60.0
-        } else {
-            $0.layer.cornerRadius = 50.0
-        }
+        $0.layer.cornerRadius = 55.0
         return $0
     } (UIView())
     
@@ -61,11 +53,7 @@ class ViewController: UIViewController {
     // EXPENSES
     var expenseView: UIView = {
         $0.backgroundColor = UIColor(hex: "#ddddddff")
-        if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
-            $0.layer.cornerRadius = 60.0
-        } else {
-            $0.layer.cornerRadius = 50.0
-        }
+        $0.layer.cornerRadius = 55.0
         return $0
     } (UIView())
     
@@ -106,6 +94,17 @@ class ViewController: UIViewController {
         return $0
     } (CAShapeLayer())
     
+    var progressView: UIView = {
+        $0.backgroundColor = .clear
+        return $0
+    } (UIView())
+    
+    lazy var daysRemainingLabel: UILabel = {
+        $0.text = "There are " + getDaysRemaining() + " days left in " + getCurrentMonth() + " ($" + " per day)"
+        $0.font = UIFont(name: "Avenir-Medium", size: 15.0)
+        return $0
+    } (UILabel())
+    
     lazy var progressBarBackground: CAShapeLayer = {
         $0.fillColor = UIColor.clear.cgColor
         $0.strokeColor = UIColor.lightGray.cgColor
@@ -115,12 +114,6 @@ class ViewController: UIViewController {
         $0.strokeEnd = 1
         return $0
     } (CAShapeLayer())
-    
-    lazy var daysRemainingLabel: UILabel = {
-        $0.text = "There are " + getDaysRemaining() + " days left in " + getCurrentMonth() + " ($" + " per day)"
-        $0.font = UIFont(name: "Avenir-Medium", size: 15.0)
-        return $0
-    } (UILabel())
     
     // FUNCTIONS
     func getCurrentMonth() -> String {
@@ -133,16 +126,10 @@ class ViewController: UIViewController {
     func createProgressLayout(bezierIn: CAShapeLayer) {
         let yAxis: CGFloat
         let radiusIn: CGFloat
-        if UIDevice.modelName.contains("Plus") {
-            yAxis = 190
-            radiusIn = 50
-        } else if UIDevice.modelName.contains("X") {
-            yAxis = 220
-            radiusIn = 70
-        } else {
-            yAxis = 150
-            radiusIn = 40
-        }
+        radiusIn = UIScreen.main.bounds.height / 10
+        let number = 210 / UIScreen.main.bounds.height
+        print(number)
+        yAxis = radiusIn + 4
         let xAxis: CGFloat = UIScreen.main.bounds.width/2
         let center = CGPoint(x: xAxis, y: yAxis)
         let circularPath = UIBezierPath(arcCenter: center, radius: radiusIn, startAngle: -CGFloat.pi / 2, endAngle: 3 / 2 * CGFloat.pi, clockwise: true)
@@ -178,28 +165,28 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor(hex: "#cfffe5ff")
         
         view.addSubview(graphView)
         view.addSubview(planView)
-        view.addSubview(monthView)
+//        view.addSubview(monthView)
         view.addSubview(daysRemainingLabel)
         
         view.addSubview(planLabel)
         view.addSubview(graphLabel)
         view.addSubview(expenseView)
         view.addSubview(expenseLabel)
+        view.addSubview(progressView)
         
-        view.layer.addSublayer(progressBarBackground)
-        view.layer.addSublayer(progressBar)
+        progressView.layer.addSublayer(progressBarBackground)
+        progressView.layer.addSublayer(progressBar)
         
         graphView.addSubview(graphButton)
         planView.addSubview(planButton)
         expenseView.addSubview(expenseButton)
         
         
-        monthView.addSubview(monthHeader)
+        view.addSubview(monthHeader)
         setupConstraints()
         setupButtons()
         //view.bringSubviewToFront(monthView)
@@ -213,17 +200,19 @@ class ViewController: UIViewController {
     
     @objc func analyticsPressed() {
         let analytics = AnalyticsController()
-        self.present(analytics, animated: false, completion: nil)
+        navigationController?.pushViewController(analytics, animated: true)
+//        self.present(analytics, animated: true, completion: nil)
     }
     
     @objc func myPlanPressed() {
         let myPlan = MyPlanController()
-        self.present(myPlan, animated: true, completion: nil)
+        self.navigationController?.pushViewController(myPlan, animated: true)
+//        self.present(myPlan, animated: true, completion: nil)
     }
     
     @objc func expensesPressed() {
         let expenses = ExpensesController()
-        self.present(expenses, animated: true, completion: nil)
+        self.navigationController?.pushViewController(expenses, animated: true)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -235,7 +224,6 @@ class ViewController: UIViewController {
     }
     
     func animateProgressBar(toPercentage percentage: CGFloat) {
-        print("print")
         let fromValue = progressBar.strokeEnd
         progressBar.strokeEnd = percentage
         
@@ -256,16 +244,11 @@ class ViewController: UIViewController {
         
         // GRAPH
         graphView.snp.makeConstraints { (make) in
-            if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
-                make.centerX.equalToSuperview().inset(-80)
-                make.centerY.equalToSuperview().offset(-30)
-                make.height.width.equalTo(120)
-            } else {
-                make.centerX.equalToSuperview().inset(-70)
-                make.centerY.equalToSuperview().offset(-20)
-                make.height.width.equalTo(100)
-                
-            }
+            
+            
+            make.centerX.equalToSuperview().offset(-75)
+            make.height.width.equalTo(110)
+            make.top.equalTo(planView.snp.top)
             
         }
         
@@ -281,15 +264,10 @@ class ViewController: UIViewController {
         
         // MY PLAN
         planView.snp.makeConstraints { (make) in
-            if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
-                make.centerX.equalToSuperview().offset(80)
-                make.centerY.equalToSuperview().offset(-30)
-                make.height.width.equalTo(120)
-            } else {
-                make.centerX.equalToSuperview().offset(70)
-                make.centerY.equalToSuperview().offset(-20)
-                make.height.width.equalTo(100)
-            }
+            
+            make.centerX.equalToSuperview().offset(75)
+            make.height.width.equalTo(110)
+            make.top.equalTo(daysRemainingLabel.snp.bottom).offset(4)
         }
         
         planButton.snp.makeConstraints { (make) in
@@ -304,15 +282,10 @@ class ViewController: UIViewController {
         
         // EXPENSES
         expenseView.snp.makeConstraints { (make) in
-            if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
-                make.centerX.equalToSuperview().offset(-80)
-                make.centerY.equalToSuperview().offset(130)
-                make.height.width.equalTo(120)
-            } else {
-                make.centerX.equalToSuperview().offset(-70)
-                make.centerY.equalToSuperview().offset(120)
-                make.height.width.equalTo(100)
-            }
+            
+            make.top.equalTo(planView.snp.bottom).offset(40)
+            make.centerX.equalToSuperview().offset(-75)
+            make.height.width.equalTo(110)
         }
         
         expenseButton.snp.makeConstraints { (make) in
@@ -325,24 +298,23 @@ class ViewController: UIViewController {
             make.height.equalTo(20)
         }
         
-        monthView.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview()
-            make.top.equalToSuperview()
-            if UIDevice.modelName.contains("X") || UIDevice.modelName.contains("Plus") {
-                make.height.equalTo(190)
-            } else {
-                make.height.equalTo(150)
-            }
+        monthHeader.snp.makeConstraints { (make) in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide)
         }
         
-        monthHeader.snp.makeConstraints { (make) in
-            make.center.equalToSuperview()
+        progressView.snp.makeConstraints { (make) in
+            make.top.equalTo(monthHeader.snp.bottom)
+            make.height.equalTo(UIScreen.main.bounds.height / 5 + 16)
+            make.left.right.equalToSuperview()
         }
         
         daysRemainingLabel.snp.makeConstraints { (make) in
-            make.bottom.equalTo(planView.snp_top).offset(-4)
+            make.top.equalTo(progressView.snp.bottom)
+            make.bottom.equalTo(planView.snp.top).offset(-4)
             make.centerX.equalToSuperview()
         }
+        
         
 //        planButton.snp.makeConstraints { (make) in
 //            make.edges.equalToSuperview()

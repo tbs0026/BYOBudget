@@ -12,7 +12,8 @@ import SnapKit
 
 class MyPlanController: UIViewController {
     override func viewDidLoad() {
-        view.backgroundColor = .white
+        self.title = "My Plan"
+        self.view.backgroundColor = UIColor(hex: "#eeeeeeff")
         
     }
 }

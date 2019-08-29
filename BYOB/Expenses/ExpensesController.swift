@@ -12,7 +12,8 @@ import SnapKit
 
 class ExpensesController: UIViewController {
     override func viewDidLoad() {
-        view.backgroundColor = .white
+        self.title = "Expenses"
+        self.view.backgroundColor = UIColor(hex: "#eeeeeeff")
         
     }
 }
