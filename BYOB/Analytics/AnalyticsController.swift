@@ -12,30 +12,32 @@ import SnapKit
 
 class AnalyticsController: UIViewController {
     
-    var navBar: UINavigationBar = {
-        let navig = UINavigationBar()
-        navig.backgroundColor = .mint
-        $0.increaseSize(100)
-        //navig.heightAnchor = 100(NSLayoutDimension)
-        //navig.titleTextAttributes = [NSExtensionItemAttributedTitleKey: "Analytics"]
-        $0.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
-        $0.barTintColor = .mint
-        $0.isHidden = false
+    var navBar = NavigationBar(frame: CGRect(x: 0, y: 44, width: UIScreen.main.bounds.width, height: 44))
+    
+    var statusBarBackground: UIView = {
+        $0.backgroundColor = .mint
         return $0
-    }(UINavigationBar())
+    } (UIView())
+    
+    func setupNavBar() {
+        navBar.setTitleText(title: "Analytics")
+        
+    }
     
     override func viewDidLoad() {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
-        view.addSubview(navBar)
-        
+        super.viewDidLoad()
+        self.view.translatesAutoresizingMaskIntoConstraints = true
+        self.view.backgroundColor = UIColor(hex: "#eeeeeeff")
+        self.view.addSubview(navBar)
+        self.view.addSubview(statusBarBackground)
+        setupNavBar()
         setupConstraints()
     }
     
     func setupConstraints() {
-//        navBar.snp.makeConstraints { (make) in
-//            make.top.left.right.equalToSuperview()
-//            make.height.equalTo(84)
-//        }
+        statusBarBackground.snp.makeConstraints { (make) in
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(44)
+        }
     }
 }

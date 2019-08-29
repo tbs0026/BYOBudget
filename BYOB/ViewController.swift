@@ -213,7 +213,7 @@ class ViewController: UIViewController {
     
     @objc func analyticsPressed() {
         let analytics = AnalyticsController()
-        self.present(analytics, animated: true, completion: nil)
+        self.present(analytics, animated: false, completion: nil)
     }
     
     @objc func myPlanPressed() {
