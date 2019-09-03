@@ -11,6 +11,9 @@
 		5A0BFA0223173AAC00DBA610 /* AnalyticsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0BFA0123173AAC00DBA610 /* AnalyticsController.swift */; };
 		5A0BFA0423173ACA00DBA610 /* ExpensesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0BFA0323173ACA00DBA610 /* ExpensesController.swift */; };
 		5A0BFA0723173D1100DBA610 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0BFA0623173D1100DBA610 /* NavigationBar.swift */; };
+		5A42F0F8231F00A10069F230 /* MyPlanDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A42F0F7231F00A10069F230 /* MyPlanDetail.swift */; };
+		5A42F0FA231F01C70069F230 /* MyPlanObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A42F0F9231F01C70069F230 /* MyPlanObject.swift */; };
+		5A42F0FC231F07290069F230 /* MyPlanCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A42F0FB231F07290069F230 /* MyPlanCell.swift */; };
 		5A5985E9230B64E100A190C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5A5985E8230B64E100A190C1 /* Assets.xcassets */; };
 		5A89101E23187EFE00CBCBFE /* CircularProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A89101D23187EFE00CBCBFE /* CircularProgress.swift */; };
 		5AE8C9302305D216002308CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AE8C92F2305D216002308CC /* AppDelegate.swift */; };
@@ -26,6 +29,9 @@
 		5A0BFA0123173AAC00DBA610 /* AnalyticsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsController.swift; sourceTree = "<group>"; };
 		5A0BFA0323173ACA00DBA610 /* ExpensesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesController.swift; sourceTree = "<group>"; };
 		5A0BFA0623173D1100DBA610 /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
+		5A42F0F7231F00A10069F230 /* MyPlanDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPlanDetail.swift; sourceTree = "<group>"; };
+		5A42F0F9231F01C70069F230 /* MyPlanObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPlanObject.swift; sourceTree = "<group>"; };
+		5A42F0FB231F07290069F230 /* MyPlanCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPlanCell.swift; sourceTree = "<group>"; };
 		5A5985E8230B64E100A190C1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5A89101D23187EFE00CBCBFE /* CircularProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgress.swift; sourceTree = "<group>"; };
 		5AE8C92C2305D216002308CC /* BYOB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BYOB.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -70,6 +76,9 @@
 			isa = PBXGroup;
 			children = (
 				5A0BF9FF2317371200DBA610 /* MyPlanController.swift */,
+				5A42F0F7231F00A10069F230 /* MyPlanDetail.swift */,
+				5A42F0F9231F01C70069F230 /* MyPlanObject.swift */,
+				5A42F0FB231F07290069F230 /* MyPlanCell.swift */,
 			);
 			path = "My Plan";
 			sourceTree = "<group>";
@@ -252,10 +261,13 @@
 				5A0BFA0423173ACA00DBA610 /* ExpensesController.swift in Sources */,
 				5A0BFA0223173AAC00DBA610 /* AnalyticsController.swift in Sources */,
 				5AE8C9322305D216002308CC /* ViewController.swift in Sources */,
+				5A42F0FA231F01C70069F230 /* MyPlanObject.swift in Sources */,
 				5A89101E23187EFE00CBCBFE /* CircularProgress.swift in Sources */,
 				5AE8C9422305D282002308CC /* Extensions.swift in Sources */,
+				5A42F0F8231F00A10069F230 /* MyPlanDetail.swift in Sources */,
 				5A0BFA0723173D1100DBA610 /* NavigationBar.swift in Sources */,
 				5A0BFA002317371200DBA610 /* MyPlanController.swift in Sources */,
+				5A42F0FC231F07290069F230 /* MyPlanCell.swift in Sources */,
 				5AE8C9302305D216002308CC /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
