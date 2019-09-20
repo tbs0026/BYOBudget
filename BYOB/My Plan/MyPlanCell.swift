@@ -10,6 +10,24 @@ import UIKit
 import SnapKit
 
 class MyPlanCell: UITableViewCell {
+    
+    static let reuse = "MyPlanCell"
+    
+    let card: UIView = {
+        $0.backgroundColor = UIColor(hex: "#ffffffff")
+        $0.layer.cornerRadius = 12
+        $0.layer.shadowOffset = CGSize(width: 0, height: 2)
+        $0.layer.shadowColor = UIColor.black.cgColor
+        $0.layer.shadowOpacity = 0.7
+        $0.layer.shadowRadius = 3
+        return $0
+    }(UIView())
+    
+//    init(titleIn: String, amountIn: Double) {
+//        super.init(style: .default, reuseIdentifier: "MyPlanCell")
+//        setupCell(titleIn: titleIn, amountIn: amountIn)
+//    }
+    
     var title: UILabel = {
         $0.font = UIFont(name: "Avenir-HeavyOblique", size: 16)
         return $0
@@ -20,34 +38,40 @@ class MyPlanCell: UITableViewCell {
         return $0
     } (UILabel())
     
-    static let reuse = "MyPlanCell"
-    
     func setupCell(titleIn: String, amountIn: Double) {
-        self.backgroundColor = UIColor(hex: "#ffffffff")
+        self.backgroundColor = UIColor(hex: "#eeeeeeff")
         amount.text = String(amountIn)
         title.text = titleIn
+
+        addSubview(card)
+        card.addSubview(self.title)
+        card.addSubview(self.amount)
+        card.snp.removeConstraints()
+        card.subviews.forEach { $0.snp.removeConstraints() }
         setupConstraints()
-        self.contentView.addSubview(title)
+        
     }
     
     func setupVariables() {
     }
     
     func setupConstraints() {
-        title.snp.makeConstraints { (make) in
-            make.centerY.left.equalToSuperview().inset(4)
-            make.height.equalTo(20)
+        card.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(8)
+            
         }
         
         title.snp.makeConstraints { (make) in
-            make.centerY.right.equalToSuperview().inset(4)
+            make.left.equalToSuperview().inset(4)
+            make.centerY.equalToSuperview()
+            make.height.equalTo(20)
+        }
+        
+        amount.snp.makeConstraints { (make) in
+            make.right.equalToSuperview().inset(4)
+            make.centerY.equalToSuperview()
             make.height.equalTo(20)
         }
         
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
 }

@@ -198,19 +198,28 @@ class ViewController: UIViewController {
         expenseButton.addTarget(self, action: #selector(self.expensesPressed), for: .touchUpInside)
     }
     
+    func hapticFeedback() {
+        let heavyImpact = UIImpactFeedbackGenerator(style: .heavy)
+        heavyImpact.prepare()
+        heavyImpact.impactOccurred()
+    }
+    
     @objc func analyticsPressed() {
+        hapticFeedback()
         let analytics = AnalyticsController()
         navigationController?.pushViewController(analytics, animated: true)
 //        self.present(analytics, animated: true, completion: nil)
     }
     
     @objc func myPlanPressed() {
+        hapticFeedback()
         let myPlan = MyPlanController()
         self.navigationController?.pushViewController(myPlan, animated: true)
 //        self.present(myPlan, animated: true, completion: nil)
     }
     
     @objc func expensesPressed() {
+        hapticFeedback()
         let expenses = ExpensesController()
         self.navigationController?.pushViewController(expenses, animated: true)
     }

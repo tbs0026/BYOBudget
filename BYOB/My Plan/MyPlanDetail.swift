@@ -9,13 +9,15 @@
 import UIKit
 import SnapKit
 
-class MyPlanDetail: UIViewController {
+class MyPlanDetail: UIViewController, UITextFieldDelegate{
     
+    let textField = UITextField()
     override func viewDidLoad() {
         title = "My Plan"
         self.view.backgroundColor = UIColor(hex: "#eeeeeeff")
         
     }
+    
     
     @objc func saveObject() {
     var arrayIn = UserDefaults.standard.array(forKey: "MyPlan")
