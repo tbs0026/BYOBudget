@@ -18,6 +18,19 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         
     }
     
+    init(itemIn: MyPlanObject) {
+        super.init(nibName: nil, bundle: nil)
+        
+    }
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     @objc func saveObject() {
     var arrayIn = UserDefaults.standard.array(forKey: "MyPlan")

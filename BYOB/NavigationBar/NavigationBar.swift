@@ -37,7 +37,6 @@ class NavigationBar: UIView {
     
     func setTitleText(title: String) {
         navTitle.text = title
-        //self.topItem?.title = title
     }
     
     
