@@ -18,6 +18,7 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     override func viewDidLoad() {
         let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
+        
 
         navigationItem.rightBarButtonItem = add
         self.title = "My Plan"
