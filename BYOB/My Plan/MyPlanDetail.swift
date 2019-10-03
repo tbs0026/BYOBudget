@@ -57,13 +57,29 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         titleTextField.inputAccessoryView = keyboardToolbar
     }
     
+    func setupAmount() {
+        if titleTextField.text == "" {
+            titleTextField.attributedPlaceholder = NSAttributedString(string: "Enter Amount")
+        }
+        titleTextField.delegate = self
+        titleTextField.backgroundColor = UIColor(hex: "#FFFFFFFF")
+        titleTextField.textColor = .black
+        titleTextField.layer.cornerRadius = 8.0
+        titleTextField.font = UIFont(name: "Avenir-Bold", size: 16)
+        titleTextField.borderStyle = .roundedRect
+        titleTextField.inputAccessoryView = keyboardToolbar
+        titleTextField.keyboardType = UIKeyboardType.numberPad
+    }
+    
     func setupKeyboard() {
         keyboardToolbar.sizeToFit()
-        keyboardToolbar.barTintColor = UIColor(hex: "#d0d3d8ff")
+        keyboardToolbar.barTintColor = UIColor(hex: "#eeeeeeff")
+        keyboardToolbar.alpha = 1.0
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.dismissKeyboard))
         doneButton.tintColor = .blue
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         keyboardToolbar.setItems([flexSpace, doneButton], animated: false)
+        
     }
     
     @objc func dismissKeyboard() {
