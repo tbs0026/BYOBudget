@@ -14,9 +14,24 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     let titleTextField = UITextField()
     let amountTextField = UITextField()
     var currentObject = MyPlanObject(titleIn: "", amountIn: 0)
+    var monthlyLabel = UILabel()
+    let checkedImage = UIImage(named: "btchecked")
+    let uncheckedImage = UIImage(named: "btunchecked")
     
+    var isChecked = false {
+        didSet {
+            if isChecked {
+                monthlyCheckbox.setImage(checkedImage, for: .normal)
+            } else {
+                monthlyCheckbox.setImage(uncheckedImage, for: .normal)
+            }
+        }
+    }
+    
+    let monthlyCheckbox = UIButton()
     var cancelButton = UIBarButtonItem()
     var saveButton = UIBarButtonItem()
+    
     
     override func viewDidLoad() {
         title = "My Plan"
@@ -27,9 +42,13 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         self.view.backgroundColor = UIColor(hex: "#eeeeeeff")
         self.view.addSubview(titleTextField)
         self.view.addSubview(amountTextField)
+        self.view.addSubview(monthlyCheckbox)
+        self.view.addSubview(monthlyLabel)
         setupConstraints()
         setupKeyboard()
         setupTitle()
+        setupAmount()
+        setupMonthlyCheckbox()
     }
     
     init(itemIn: MyPlanObject) {
@@ -44,6 +63,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     func setupTitle() {
         if titleTextField.text == "" {
             titleTextField.attributedPlaceholder = NSAttributedString(string: "Enter Title")
@@ -57,29 +77,43 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         titleTextField.inputAccessoryView = keyboardToolbar
     }
     
-    func setupAmount() {
-        if titleTextField.text == "" {
-            titleTextField.attributedPlaceholder = NSAttributedString(string: "Enter Amount")
+    func setupMonthlyCheckbox() {
+        monthlyLabel.text = "Make this a monthly budgeted item"
+        monthlyLabel.textColor = .darkGray
+        monthlyLabel.font = UIFont(name: "Avenir-Medium", size: 16)
+        if isChecked {
+            monthlyCheckbox.setImage(checkedImage, for: .normal)
+        } else {
+            monthlyCheckbox.setImage(uncheckedImage, for: .normal)
         }
-        titleTextField.delegate = self
-        titleTextField.backgroundColor = UIColor(hex: "#FFFFFFFF")
-        titleTextField.textColor = .black
-        titleTextField.layer.cornerRadius = 8.0
-        titleTextField.font = UIFont(name: "Avenir-Bold", size: 16)
-        titleTextField.borderStyle = .roundedRect
-        titleTextField.inputAccessoryView = keyboardToolbar
-        titleTextField.keyboardType = UIKeyboardType.numberPad
+        monthlyCheckbox.addTarget(self, action: #selector(self.checkboxClicked), for: .touchUpInside)
+        }
+    
+    func setupAmount() {
+        if amountTextField.text == "" {
+            amountTextField.attributedPlaceholder = NSAttributedString(string: "Enter Amount")
+        }
+        amountTextField.delegate = self
+        amountTextField.backgroundColor = UIColor(hex: "#FFFFFFFF")
+        amountTextField.textColor = .black
+        amountTextField.layer.cornerRadius = 8.0
+        amountTextField.font = UIFont(name: "Avenir-Bold", size: 16)
+        amountTextField.borderStyle = .roundedRect
+        amountTextField.inputAccessoryView = keyboardToolbar
+        amountTextField.keyboardType = .decimalPad
     }
     
     func setupKeyboard() {
         keyboardToolbar.sizeToFit()
         keyboardToolbar.barTintColor = UIColor(hex: "#eeeeeeff")
         keyboardToolbar.alpha = 1.0
+        keyboardToolbar.tintColor = UIColor(hex: "#eeeeeeff")
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.dismissKeyboard))
         doneButton.tintColor = .blue
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         keyboardToolbar.setItems([flexSpace, doneButton], animated: false)
-        
+        keyboardToolbar.layer.borderColor = UIColor(hex: "#eeeeeeff")?.cgColor
+        keyboardToolbar.clipsToBounds = true
     }
     
     @objc func dismissKeyboard() {
@@ -93,12 +127,28 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
             make.height.equalTo(50)
         }
         
-        titleTextField.snp.makeConstraints{ (make) in
+        amountTextField.snp.makeConstraints{ (make) in
             make.top.equalTo(titleTextField.snp.bottom).offset(8)
             make.left.equalToSuperview().offset(8)
             make.right.equalToSuperview().offset(-8)
             make.height.equalTo(50)
         }
+        
+        monthlyLabel.snp.makeConstraints{ (make) in
+            make.top.equalTo(amountTextField.snp.bottom).offset(26)
+            make.left.equalTo(monthlyCheckbox.snp.right).offset(4)
+        }
+        
+        monthlyCheckbox.snp.makeConstraints{ (make) in
+            make.top.equalTo(amountTextField.snp.bottom).offset(16)
+            make.left.equalToSuperview().offset(16)
+            make.height.width.equalTo(40)
+        }
+    }
+    
+    @objc func checkboxClicked() {
+        isChecked = !isChecked
+        monthlyCheckbox.reloadInputViews()
     }
     
     func cancelAlert() {

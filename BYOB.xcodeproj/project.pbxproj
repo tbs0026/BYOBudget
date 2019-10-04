@@ -89,6 +89,14 @@
 			path = Expenses;
 			sourceTree = "<group>";
 		};
+		5A77847B2347FB2A00793052 /* ExtraThings */ = {
+			isa = PBXGroup;
+			children = (
+				5A89101D23187EFE00CBCBFE /* CircularProgress.swift */,
+			);
+			path = ExtraThings;
+			sourceTree = "<group>";
+		};
 		5AE8C9232305D215002308CC = {
 			isa = PBXGroup;
 			children = (
@@ -112,7 +120,7 @@
 			children = (
 				5AE8C92F2305D216002308CC /* AppDelegate.swift */,
 				5AE8C9312305D216002308CC /* ViewController.swift */,
-				5A89101D23187EFE00CBCBFE /* CircularProgress.swift */,
+				5A77847B2347FB2A00793052 /* ExtraThings */,
 				5AE8C9412305D282002308CC /* Extensions.swift */,
 				5A5985E8230B64E100A190C1 /* Assets.xcassets */,
 				5AE8C9382305D217002308CC /* LaunchScreen.storyboard */,
