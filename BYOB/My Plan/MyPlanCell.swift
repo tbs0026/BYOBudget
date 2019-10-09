@@ -40,7 +40,12 @@ class MyPlanCell: UITableViewCell {
     
     func setupCell(titleIn: String, amountIn: Double) {
         self.backgroundColor = UIColor(hex: "#eeeeeeff")
-        amount.text = String(amountIn)
+        let formatter = NumberFormatter()
+        formatter.usesGroupingSeparator = true
+        formatter.numberStyle = .currency
+        formatter.locale = Locale.current
+        let price = formatter.string(from: NSNumber(value: amountIn))
+        amount.text = price
         title.text = titleIn
 
         addSubview(card)

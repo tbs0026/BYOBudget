@@ -12,9 +12,17 @@ import SnapKit
 import DZNEmptyDataSet
 
 class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
-    
+    var indexKey = "MyPlanIndex"
     var tableView = UITableView()
-    var myPlanArray: [MyPlanObject] = [MyPlanObject(titleIn: "Title", amountIn: 10.0)]
+    var myPlanArray: [MyPlanObject] = []
+    lazy var monthlyKey = getMonthlyKey()
+    
+    
+    func getMonthlyKey() -> String {
+        let thisMonth = Date().monthName(.default)
+        let thisMonthKey = "MyPlanArray\(thisMonth)"
+        return thisMonthKey
+    }
     
     override func viewDidLoad() {
         let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
@@ -24,10 +32,16 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.title = "My Plan"
         self.view.backgroundColor = UIColor(hex: "#eeeeeeff")
         setupTableView()
+        loadSavedPlans()
 
         view.addSubview(tableView)
         
         setupConstraints()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        tableView.reloadInputViews()
+        tableView.reloadData()
     }
     
     func setupTableView() {
@@ -40,19 +54,26 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
         tableView.register(MyPlanCell.self, forCellReuseIdentifier: MyPlanCell.reuse)
     }
     
+    func loadSavedPlans() {
+        let arrayIn = decodeArray()
+        myPlanArray = arrayIn.sorted(by: {$0.dateEdited.compare($1.dateEdited) == .orderedDescending})
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return myPlanArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MyPlanCell.reuse, for: indexPath) as! MyPlanCell
-        cell.setupCell(titleIn: "Title", amountIn: 10.0)
+        let myPlanObject = myPlanArray[indexPath.row]
+        cell.setupCell(titleIn: myPlanObject.title, amountIn: myPlanObject.amount)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         editCell(indexPath: indexPath)
+        UserDefaults.standard.set(indexPath.row, forKey: indexKey)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -60,12 +81,36 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
         
     }
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            self.deleteCell(indexPath: indexPath)
+        }
+    }
+    
+    //good
+    func deleteCell (indexPath: IndexPath) {
+        myPlanArray.remove(at: indexPath.row)
+        if let jsonDataOut = try? JSONEncoder().encode(myPlanArray.self) {
+            if let jsonString = String(data: jsonDataOut, encoding: .utf8) {
+                UserDefaults.standard.set(jsonString, forKey: monthlyKey)
+            }
+        }
+        tableView.reloadData()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
+        if #available(iOS 13.0, *) {
+            overrideUserInterfaceStyle = .light
+        } else {
+            // Fallback on earlier versions
+        }
+        loadSavedPlans()
         tableView.reloadData()
     }
     
     @objc func addTapped() {
-        let myPlanDetail = MyPlanDetail()
+        let myNewPlanObject = MyPlanObject(titleIn: "", amountIn: 0, monthly: false, epochIn: getCurrentEpoch())
+        let myPlanDetail = MyPlanDetail(itemIn: myNewPlanObject)
         self.navigationController?.pushViewController(myPlanDetail, animated: true)
     }
     
@@ -75,11 +120,29 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.navigationController?.pushViewController(detail, animated: true)
     }
     
+    func getCurrentEpoch() -> String {
+        return Date().timeIntervalSince1970.toString()
+    }
+    
+    func decodeArray() -> [MyPlanObject] {
+        var array: [MyPlanObject] = []
+        if let JSONStringIn = UserDefaults.standard.string(forKey: monthlyKey) {
+            if let JSONData = JSONStringIn.data(using: .utf8) {
+                let cachedArray = try? JSONDecoder().decode([MyPlanObject].self, from: JSONData)
+                array = cachedArray!
+            }
+        }
+        return array
+    }
+    
+    
     func setupConstraints() {
         tableView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
     }
+    
+    
 }
 
 

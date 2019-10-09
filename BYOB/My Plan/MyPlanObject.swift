@@ -8,26 +8,20 @@
 import UIKit
 import SwiftDate
 
-class MyPlanObject {
+class MyPlanObject: Codable {
     var title: String
-    var epoch: String
     var amount: Double
+    var monthlyItem: Bool
+    var dateEdited = Date()
+    var epoch = String()
     
-    init(titleIn: String, amountIn: Double) {
-        title = titleIn
-        amount = amountIn
-        epoch = Date().timeIntervalSince1970.toString()
+    init(titleIn: String, amountIn: Double, monthly: Bool, epochIn: String) {
+        self.title = titleIn
+        self.amount = amountIn
+        self.monthlyItem = monthly
+        self.dateEdited = Date()
+        self.epoch = epochIn
     }
     
-    func setTitle(titleIn: String) {
-        title = titleIn
-    }
     
-    func setAmount(amountIn: Double) {
-        amount = amountIn
-    }
-    
-    func setEpoch(epochIn: String) {
-        epoch = epochIn
-    }
 }

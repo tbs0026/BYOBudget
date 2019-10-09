@@ -21,9 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navController.navigationBar.barTintColor = .mint
         navController.navigationBar.shadowImage = UIImage()
         navController.navigationBar.tintColor = .black
+        navController.navigationBar.barStyle = .black
         window?.rootViewController = navController
         window?.makeKeyAndVisible()
         return true
+        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

@@ -6,4 +6,5 @@ target 'BYOB' do
     pod 'SnapKit', '~> 4.0'
     pod 'DZNEmptyDataSet'
     pod 'SwiftDate'
+    pod 'M13Checkbox'
 end

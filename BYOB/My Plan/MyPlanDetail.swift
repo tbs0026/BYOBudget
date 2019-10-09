@@ -8,29 +8,21 @@
 
 import UIKit
 import SnapKit
+import M13Checkbox
 
 class MyPlanDetail: UIViewController, UITextFieldDelegate{
     let keyboardToolbar = UIToolbar()
     let titleTextField = UITextField()
     let amountTextField = UITextField()
-    var currentObject = MyPlanObject(titleIn: "", amountIn: 0)
+    var currentObject = MyPlanObject(titleIn: "", amountIn: 0, monthly: false, epochIn: "")
     var monthlyLabel = UILabel()
-    let checkedImage = UIImage(named: "btchecked")
-    let uncheckedImage = UIImage(named: "btunchecked")
-    
-    var isChecked = false {
-        didSet {
-            if isChecked {
-                monthlyCheckbox.setImage(checkedImage, for: .normal)
-            } else {
-                monthlyCheckbox.setImage(uncheckedImage, for: .normal)
-            }
-        }
-    }
-    
-    let monthlyCheckbox = UIButton()
+    let monthlyCheckbox = M13Checkbox()
+    var isMonthly = false
     var cancelButton = UIBarButtonItem()
     var saveButton = UIBarButtonItem()
+    lazy var monthlyKey = getMonthlyKey()
+    var indexKey = "MyPlanIndex"
+    var epoch = ""
     
     
     override func viewDidLoad() {
@@ -51,9 +43,24 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         setupMonthlyCheckbox()
     }
     
+    func getMonthlyKey() -> String {
+        let thisMonth = Date().monthName(.default)
+        let thisMonthKey = "MyPlanArray\(thisMonth)"
+        return thisMonthKey
+    }
+    
     init(itemIn: MyPlanObject) {
         super.init(nibName: nil, bundle: nil)
+        if #available(iOS 13.0, *) {
+            overrideUserInterfaceStyle = .light
+        } else {
+            // Fallback on earlier versions
+        }
         currentObject = itemIn
+        isMonthly = currentObject.monthlyItem
+        amountTextField.text = String(currentObject.amount)
+        titleTextField.text = String(currentObject.title)
+        epoch = currentObject.epoch
     }
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -81,16 +88,16 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         monthlyLabel.text = "Make this a monthly budgeted item"
         monthlyLabel.textColor = .darkGray
         monthlyLabel.font = UIFont(name: "Avenir-Medium", size: 16)
-        if isChecked {
-            monthlyCheckbox.setImage(checkedImage, for: .normal)
-        } else {
-            monthlyCheckbox.setImage(uncheckedImage, for: .normal)
+        monthlyCheckbox.boxType = .circle
+        monthlyCheckbox.tintColor = .mint
+        monthlyCheckbox.stateChangeAnimation = .fill
+        if isMonthly {
+            monthlyCheckbox.checkState = .checked
         }
-        monthlyCheckbox.addTarget(self, action: #selector(self.checkboxClicked), for: .touchUpInside)
         }
     
     func setupAmount() {
-        if amountTextField.text == "" {
+        if currentObject.amount == 0.0 {
             amountTextField.attributedPlaceholder = NSAttributedString(string: "Enter Amount")
         }
         amountTextField.delegate = self
@@ -146,11 +153,6 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         }
     }
     
-    @objc func checkboxClicked() {
-        isChecked = !isChecked
-        monthlyCheckbox.reloadInputViews()
-    }
-    
     func cancelAlert() {
         let alert = UIAlertController(title: "You have unsaved changes", message: "Would you like to save this plan?", preferredStyle: .alert)
         
@@ -180,10 +182,45 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     }
     
     @objc func savePressed() {
-        var arrayIn = UserDefaults.standard.array(forKey: "MyPlan")
-        let myObject = MyPlanObject(titleIn: "Title", amountIn: 4.0)
-        arrayIn?.append(myObject)
-        UserDefaults.standard.set(arrayIn, forKey: "MyPlan")
+        currentObject.amount = Double(amountTextField.text!) ?? 0.0
+        currentObject.title = titleTextField.text ?? "New Budget Item"
+        currentObject.dateEdited = Date()
+        currentObject.monthlyItem = isMonthly
+        appendToCachedArray(myPlanObject: currentObject)
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    func appendToCachedArray(myPlanObject: MyPlanObject) {
+        var checkNew = true
+        var array: [MyPlanObject] = []
+        if let jsonStringIn = UserDefaults.standard.string(forKey: monthlyKey) {
+            if let jsonDataIn = jsonStringIn.data(using: .utf8) {
+                let myPlanArray = try? JSONDecoder().decode([MyPlanObject].self, from: jsonDataIn)
+                array = myPlanArray!
+                
+                // checks if the array contains the item, if it does, checkNew = false
+                if jsonStringIn.contains(myPlanObject.title) {
+                    checkNew = false
+                }
+            }
+        }
+        
+        // appends the item to the array if it is new, and if it is not
+        if checkNew {
+            array.append(myPlanObject)
+        } else {
+            var index = UserDefaults.standard.integer(forKey: indexKey)
+                     // Because the array is sorted in reverse by date
+            index = (array.count - 1) - index
+            array.remove(at: index)
+            array.append(myPlanObject)
+        }
+        
+        // caches the OCVNoteObject
+        if let jsonDataOut = try? JSONEncoder().encode(array.self) {
+            if let jsonString = String(data: jsonDataOut, encoding: .utf8) {
+                UserDefaults.standard.set(jsonString, forKey: monthlyKey)
+            }
+        }
     }
 }
