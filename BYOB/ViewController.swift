@@ -99,11 +99,7 @@ class ViewController: UIViewController {
         return $0
     } (UIView())
     
-    lazy var daysRemainingLabel: UILabel = {
-        $0.text = "There are " + getDaysRemaining() + " days left in " + getCurrentMonth() + " ($" + " per day)"
-        $0.font = UIFont(name: "Avenir-Medium", size: 15.0)
-        return $0
-    } (UILabel())
+    var daysRemainingLabel = UILabel()
     
     lazy var progressBarBackground: CAShapeLayer = {
         $0.fillColor = UIColor.clear.cgColor
@@ -121,6 +117,21 @@ class ViewController: UIViewController {
         formatterMonth.dateFormat = "MMMM"
         let dateMonth = formatterMonth.string(from: Date())
         return dateMonth
+    }
+    
+    func setDaysRemainingLabel() {
+        let remaining = staticFunctions.getTotalMaxBudget() - staticFunctions.getTotalAmountSpent()
+        var dailyRemaining = remaining
+        if getDaysRemaining() != "0" {
+        dailyRemaining = remaining / Double(getDaysRemaining())!
+        }
+        let formatter = NumberFormatter()
+        formatter.usesGroupingSeparator = true
+        formatter.numberStyle = .currency
+        formatter.locale = Locale.current
+        let dailyRemainingString = formatter.string(from: NSNumber(value: dailyRemaining))
+        daysRemainingLabel.text = "There are " + getDaysRemaining() + " days left in " + getCurrentMonth() + " (\(dailyRemainingString!) per day)"
+        daysRemainingLabel.font = UIFont(name: "Avenir-Medium", size: 15.0)
     }
     
     func createProgressLayout(bezierIn: CAShapeLayer) {
@@ -164,11 +175,6 @@ class ViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        if #available(iOS 13.0, *) {
-            overrideUserInterfaceStyle = .light
-        } else {
-            // Fallback on earlier versions
-        }
         super.viewDidLoad()
         view.backgroundColor = UIColor(hex: "#cfffe5ff")
         
@@ -197,6 +203,10 @@ class ViewController: UIViewController {
         //view.bringSubviewToFront(monthView)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        setDaysRemainingLabel()
+    }
+    
     func setupButtons() {
         graphButton.addTarget(self, action: #selector(self.analyticsPressed), for: .touchUpInside)
         planButton.addTarget(self, action: #selector(self.myPlanPressed), for: .touchUpInside)
@@ -204,7 +214,7 @@ class ViewController: UIViewController {
     }
     
     func hapticFeedback() {
-        let heavyImpact = UIImpactFeedbackGenerator(style: .heavy)
+        let heavyImpact = UIImpactFeedbackGenerator(style: .medium)
         heavyImpact.prepare()
         heavyImpact.impactOccurred()
     }
@@ -230,8 +240,13 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        
+        var percentage = 0.0
         super.viewDidAppear(false)
-        animateProgressBar(toPercentage: 0.75)
+        if staticFunctions.getTotalMaxBudget() != 0 {
+            percentage = staticFunctions.getTotalAmountSpent() / staticFunctions.getTotalMaxBudget()
+        }
+        animateProgressBar(toPercentage: CGFloat(percentage))
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
 //            self.animateProgressBar(toPercentage: 0.7)
 //        }
@@ -258,8 +273,6 @@ class ViewController: UIViewController {
         
         // GRAPH
         graphView.snp.makeConstraints { (make) in
-            
-            
             make.centerX.equalToSuperview().offset(-75)
             make.height.width.equalTo(110)
             make.top.equalTo(planView.snp.top)
@@ -278,7 +291,6 @@ class ViewController: UIViewController {
         
         // MY PLAN
         planView.snp.makeConstraints { (make) in
-            
             make.centerX.equalToSuperview().offset(75)
             make.height.width.equalTo(110)
             make.top.equalTo(daysRemainingLabel.snp.bottom).offset(4)
@@ -296,7 +308,6 @@ class ViewController: UIViewController {
         
         // EXPENSES
         expenseView.snp.makeConstraints { (make) in
-            
             make.top.equalTo(planView.snp.bottom).offset(40)
             make.centerX.equalToSuperview().offset(-75)
             make.height.width.equalTo(110)

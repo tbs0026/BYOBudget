@@ -9,6 +9,45 @@
 import UIKit
 import SystemConfiguration
 
+class staticFunctions {
+    
+    static func getMonthlyKey() -> String {
+        let thisMonth = Date().monthName(.default)
+        let thisMonthKey = "MyPlanArray\(thisMonth)"
+        return thisMonthKey
+    }
+    
+    static func getTotalMaxBudget() -> Double {
+        var array: [MyPlanObject] = []
+        if let JSONStringIn = UserDefaults.standard.string(forKey: getMonthlyKey()) {
+            if let JSONData = JSONStringIn.data(using: .utf8) {
+                let cachedArray = try? JSONDecoder().decode([MyPlanObject].self, from: JSONData)
+                array = cachedArray ?? []
+            }
+        }
+        var amount = 0.0
+        for i in array {
+            amount += i.maxAmount
+        }
+        return amount
+    }
+    
+    static func getTotalAmountSpent() -> Double {
+        var array: [MyPlanObject] = []
+        if let JSONStringIn = UserDefaults.standard.string(forKey: getMonthlyKey()) {
+            if let JSONData = JSONStringIn.data(using: .utf8) {
+                let cachedArray = try? JSONDecoder().decode([MyPlanObject].self, from: JSONData)
+                array = cachedArray ?? []
+            }
+        }
+        var amount = 0.0
+        for i in array {
+            amount += i.amountSpent
+        }
+        return amount
+    }
+}
+
 extension UIColor {
     public convenience init?(hex: String) {
         let r, g, b, a: CGFloat
@@ -36,11 +75,11 @@ extension UIColor {
     }
 }
 
-public extension UIColor {
+extension UIColor {
     static let mint: UIColor = UIColor(hex: "#cfffe5ff")!
 }
 
-public extension UIDevice {
+extension UIDevice {
     static let modelName: String = {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -109,3 +148,5 @@ public extension UIDevice {
         return mapToDevice(identifier: identifier)
     }()
 }
+
+

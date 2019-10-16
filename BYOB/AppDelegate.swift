@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navController.navigationBar.barTintColor = .mint
         navController.navigationBar.shadowImage = UIImage()
         navController.navigationBar.tintColor = .black
-        navController.navigationBar.barStyle = .black
+        navController.navigationBar.barStyle = .default
         window?.rootViewController = navController
         window?.makeKeyAndVisible()
         return true

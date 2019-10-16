@@ -14,7 +14,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     let keyboardToolbar = UIToolbar()
     let titleTextField = UITextField()
     let amountTextField = UITextField()
-    var currentObject = MyPlanObject(titleIn: "", amountIn: 0, monthly: false, epochIn: "")
+    var currentObject = MyPlanObject(titleIn: "", maxAmountIn: 0, monthly: false, amountSpentIn: 0, epochIn: "")
     var monthlyLabel = UILabel()
     let monthlyCheckbox = M13Checkbox()
     var isMonthly = false
@@ -23,6 +23,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     lazy var monthlyKey = getMonthlyKey()
     var indexKey = "MyPlanIndex"
     var epoch = ""
+    var amountSpent: Double = 0
     
     
     override func viewDidLoad() {
@@ -58,9 +59,10 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         }
         currentObject = itemIn
         isMonthly = currentObject.monthlyItem
-        amountTextField.text = String(currentObject.amount)
+        amountTextField.text = String(currentObject.maxAmount)
         titleTextField.text = String(currentObject.title)
         epoch = currentObject.epoch
+        amountSpent = currentObject.amountSpent
     }
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -97,7 +99,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         }
     
     func setupAmount() {
-        if currentObject.amount == 0.0 {
+        if currentObject.maxAmount == 0.0 {
             amountTextField.attributedPlaceholder = NSAttributedString(string: "Enter Amount")
         }
         amountTextField.delegate = self
@@ -174,7 +176,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     @objc func cancelPressed() {
         
         self.view.endEditing(true)
-        if currentObject.title != titleTextField.text || currentObject.amount.toString() != amountTextField.text {
+        if currentObject.title != titleTextField.text || currentObject.maxAmount.toString() != amountTextField.text {
             cancelAlert()
         } else {
             self.navigationController?.popViewController(animated: true)
@@ -182,7 +184,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     }
     
     @objc func savePressed() {
-        currentObject.amount = Double(amountTextField.text!) ?? 0.0
+        currentObject.maxAmount = Double(amountTextField.text!) ?? 0.0
         currentObject.title = titleTextField.text ?? "New Budget Item"
         currentObject.dateEdited = Date()
         currentObject.monthlyItem = isMonthly
@@ -190,17 +192,44 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         self.navigationController?.popViewController(animated: true)
     }
     
+    func sendSameTitlePopup() {
+        let alert = UIAlertController(title: "You already have an item with this title", message: "Please rename this item or edit the item named \(titleTextField.text!)", preferredStyle: .alert)
+        
+        let closeAlert = UIAlertAction(title: "Close", style: .default, handler: { (_) in
+            alert.dismiss(animated: true, completion: nil)
+        })
+        alert.addAction(closeAlert)
+        self.present(alert, animated: true)
+    }
+    
+    func sendEmptyTitlePopup() {
+        let alert = UIAlertController(title: "You have an empty Title", message: "Please enter a title", preferredStyle: .alert)
+        
+        let editAction = UIAlertAction(title: "Okay", style: .default, handler: { (_) in
+            alert.dismiss(animated: true, completion: nil)
+        })
+        alert.addAction(editAction)
+        self.present(alert, animated: true)
+    }
+    
     func appendToCachedArray(myPlanObject: MyPlanObject) {
         var checkNew = true
+        if currentObject.title == "" {
+            sendEmptyTitlePopup()
+            return
+        }
         var array: [MyPlanObject] = []
         if let jsonStringIn = UserDefaults.standard.string(forKey: monthlyKey) {
             if let jsonDataIn = jsonStringIn.data(using: .utf8) {
                 let myPlanArray = try? JSONDecoder().decode([MyPlanObject].self, from: jsonDataIn)
-                array = myPlanArray!
+                array = myPlanArray ?? []
                 
                 // checks if the array contains the item, if it does, checkNew = false
-                if jsonStringIn.contains(myPlanObject.title) {
+                if jsonStringIn.contains(myPlanObject.epoch) {
                     checkNew = false
+                } else if jsonStringIn.contains(myPlanObject.title) {
+                    sendSameTitlePopup()
+                    return
                 }
             }
         }

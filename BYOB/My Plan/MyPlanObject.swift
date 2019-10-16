@@ -10,16 +10,18 @@ import SwiftDate
 
 class MyPlanObject: Codable {
     var title: String
-    var amount: Double
+    var maxAmount: Double
     var monthlyItem: Bool
     var dateEdited = Date()
     var epoch = String()
+    var amountSpent: Double
     
-    init(titleIn: String, amountIn: Double, monthly: Bool, epochIn: String) {
+    init(titleIn: String, maxAmountIn: Double, monthly: Bool, amountSpentIn: Double, epochIn: String) {
         self.title = titleIn
-        self.amount = amountIn
+        self.maxAmount = maxAmountIn
         self.monthlyItem = monthly
         self.dateEdited = Date()
+        self.amountSpent = amountSpentIn
         self.epoch = epochIn
     }
     

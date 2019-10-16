@@ -15,14 +15,10 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
     var indexKey = "MyPlanIndex"
     var tableView = UITableView()
     var myPlanArray: [MyPlanObject] = []
-    lazy var monthlyKey = getMonthlyKey()
+    lazy var monthlyKey = staticFunctions.getMonthlyKey()
     
     
-    func getMonthlyKey() -> String {
-        let thisMonth = Date().monthName(.default)
-        let thisMonthKey = "MyPlanArray\(thisMonth)"
-        return thisMonthKey
-    }
+    
     
     override func viewDidLoad() {
         let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
@@ -66,7 +62,7 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MyPlanCell.reuse, for: indexPath) as! MyPlanCell
         let myPlanObject = myPlanArray[indexPath.row]
-        cell.setupCell(titleIn: myPlanObject.title, amountIn: myPlanObject.amount)
+        cell.setupCell(titleIn: myPlanObject.title, amountIn: myPlanObject.maxAmount)
         
         return cell
     }
@@ -109,7 +105,7 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     
     @objc func addTapped() {
-        let myNewPlanObject = MyPlanObject(titleIn: "", amountIn: 0, monthly: false, epochIn: getCurrentEpoch())
+        let myNewPlanObject = MyPlanObject(titleIn: "", maxAmountIn: 0, monthly: false, amountSpentIn: 0, epochIn: getCurrentEpoch())
         let myPlanDetail = MyPlanDetail(itemIn: myNewPlanObject)
         self.navigationController?.pushViewController(myPlanDetail, animated: true)
     }
@@ -129,7 +125,7 @@ class MyPlanController: UIViewController, UITableViewDelegate, UITableViewDataSo
         if let JSONStringIn = UserDefaults.standard.string(forKey: monthlyKey) {
             if let JSONData = JSONStringIn.data(using: .utf8) {
                 let cachedArray = try? JSONDecoder().decode([MyPlanObject].self, from: JSONData)
-                array = cachedArray!
+                array = cachedArray ?? []
             }
         }
         return array
