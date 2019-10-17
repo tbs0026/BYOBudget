@@ -149,4 +149,14 @@ extension UIDevice {
     }()
 }
 
+extension UIView {
+    func addDropShadow(color: UIColor = .black, offset: CGSize = CGSize(width: 0, height: 2), radius: CGFloat = 2, opacity: Float = 0.3) {
+        layer.masksToBounds = false
+        layer.shadowColor = color.cgColor
+        layer.shadowOffset = offset
+        layer.shadowRadius = radius
+        layer.shadowOpacity = opacity
+    }
+}
+
 

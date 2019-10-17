@@ -99,7 +99,8 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         }
     
     func setupAmount() {
-        if currentObject.maxAmount == 0.0 {
+        if amountTextField.text == "0.0"{
+            amountTextField.text = ""
             amountTextField.attributedPlaceholder = NSAttributedString(string: "Enter Amount")
         }
         amountTextField.delegate = self
@@ -167,6 +168,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         let cancelAction = UIAlertAction(title: "No", style: .default, handler: { (_) in
             self.navigationController?.popViewController(animated: true)
         })
+        
         alert.addAction(cancelAction)
         alert.addAction(editAction)
         alert.addAction(saveAction)
@@ -176,7 +178,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     @objc func cancelPressed() {
         
         self.view.endEditing(true)
-        if currentObject.title != titleTextField.text || currentObject.maxAmount.toString() != amountTextField.text {
+        if currentObject.title != titleTextField.text || currentObject.maxAmount != Double(amountTextField.text!){
             cancelAlert()
         } else {
             self.navigationController?.popViewController(animated: true)
@@ -188,6 +190,10 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         currentObject.title = titleTextField.text ?? "New Budget Item"
         currentObject.dateEdited = Date()
         currentObject.monthlyItem = isMonthly
+        if currentObject.title == "" || currentObject.maxAmount <= 0.005 {
+            sendEmptyFieldPopup()
+            return
+        }
         appendToCachedArray(myPlanObject: currentObject)
         self.navigationController?.popViewController(animated: true)
     }
@@ -202,8 +208,8 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         self.present(alert, animated: true)
     }
     
-    func sendEmptyTitlePopup() {
-        let alert = UIAlertController(title: "You have an empty Title", message: "Please enter a title", preferredStyle: .alert)
+    func sendEmptyFieldPopup() {
+        let alert = UIAlertController(title: "Your Title or Amount field appear to be empty", message: "Please enter a value for these fields", preferredStyle: .alert)
         
         let editAction = UIAlertAction(title: "Okay", style: .default, handler: { (_) in
             alert.dismiss(animated: true, completion: nil)
@@ -214,10 +220,6 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     
     func appendToCachedArray(myPlanObject: MyPlanObject) {
         var checkNew = true
-        if currentObject.title == "" {
-            sendEmptyTitlePopup()
-            return
-        }
         var array: [MyPlanObject] = []
         if let jsonStringIn = UserDefaults.standard.string(forKey: monthlyKey) {
             if let jsonDataIn = jsonStringIn.data(using: .utf8) {

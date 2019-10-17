@@ -6,7 +6,6 @@
 //  Copyright © 2019 Trevor Smith. All rights reserved.
 //
 
-import CoreLocation
 import UIKit
 import SnapKit
 import DZNEmptyDataSet

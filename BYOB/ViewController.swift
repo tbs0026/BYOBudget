@@ -28,6 +28,7 @@ class ViewController: UIViewController {
     var graphLabel: UILabel = {
         $0.text = "Analytics"
         $0.font = UIFont(name: "Avenir-Light", size: 20.0)
+        $0.textColor = .black
         return $0
     } (UILabel())
     
@@ -47,6 +48,7 @@ class ViewController: UIViewController {
     var planLabel: UILabel = {
         $0.text = "My Plan"
         $0.font = UIFont(name: "Avenir-Light", size: 20.0)
+        $0.textColor = .black
         return $0
     } (UILabel())
     
@@ -66,6 +68,7 @@ class ViewController: UIViewController {
     var expenseLabel: UILabel = {
         $0.text = "Expenses"
         $0.font = UIFont(name: "Avenir-Light", size: 20.0)
+        $0.textColor = .black
         return $0
     } (UILabel())
     
@@ -132,6 +135,7 @@ class ViewController: UIViewController {
         let dailyRemainingString = formatter.string(from: NSNumber(value: dailyRemaining))
         daysRemainingLabel.text = "There are " + getDaysRemaining() + " days left in " + getCurrentMonth() + " (\(dailyRemainingString!) per day)"
         daysRemainingLabel.font = UIFont(name: "Avenir-Medium", size: 15.0)
+        daysRemainingLabel.textColor = .black
     }
     
     func createProgressLayout(bezierIn: CAShapeLayer) {
