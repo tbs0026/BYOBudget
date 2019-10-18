@@ -24,6 +24,7 @@ class ExpensesController: UIViewController, UITableViewDelegate, UITableViewData
         addButton.setTitleColor(.white, for: .normal)
         addButton.addDropShadow(color: .black, offset: CGSize(width: 0, height: 5), radius: 3, opacity: 0.5)
         addButton.addTarget(self, action: #selector(self.addPressedDown), for: .touchDown)
+        addButton.addTarget(self, action: #selector(self.addPressedUp), for: .touchDragOutside)
         addButton.addTarget(self, action: #selector(self.addPressedUp), for: .touchUpInside)
     }
     
