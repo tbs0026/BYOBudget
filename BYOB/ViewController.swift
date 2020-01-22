@@ -9,8 +9,17 @@
 import UIKit
 import CoreLocation
 import SnapKit
+import BLTNBoard
 
 class ViewController: UIViewController {
+    // On First Open
+    var bulletinItem = BLTNPageItem(title: "Notifications")
+    
+    var bulletinExample = BLTNPageItem(title: "Example")
+    
+    lazy var bulletinManager: BLTNItemManager = {
+        return BLTNItemManager(rootItem: bulletinItem)
+    }()
     
     // ANALYTICS
     var graphView: UIView = {
@@ -205,6 +214,7 @@ class ViewController: UIViewController {
         setupConstraints()
         setupButtons()
         //view.bringSubviewToFront(monthView)
+        setupBulletinBoard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -254,6 +264,7 @@ class ViewController: UIViewController {
 //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
 //            self.animateProgressBar(toPercentage: 0.7)
 //        }
+        bulletinManager.showBulletin(above: self)
     }
     
     func animateProgressBar(toPercentage percentage: CGFloat) {
@@ -271,6 +282,26 @@ class ViewController: UIViewController {
         let group = CAAnimationGroup()
         group.animations = [animation, bounce]
         progressBar.add(animation, forKey: "animateStroke")
+    }
+    
+    func setupBulletinBoard() {
+        bulletinItem.image = UIImage(named: "push")
+        bulletinItem.descriptionText = "Do you want to enable push notifications for this app? I won't be obnoxious :)"
+        bulletinItem.actionButtonTitle = "Of freaking course"
+        bulletinItem.alternativeButtonTitle = "Pfft nope"
+        bulletinItem.appearance.actionButtonColor = UIColor(hex: "#F84A46FF")!
+        bulletinItem.appearance.alternativeButtonTitleColor = UIColor(hex: "#F84A46FF")!
+        bulletinItem.appearance.titleTextColor = UIColor(hex: "#F84A46FF")!
+        bulletinItem.isDismissable = false
+        bulletinItem.next = bulletinExample
+        bulletinItem.actionHandler = { (item: BLTNActionItem) in
+            self.requestNotificationAuthorization()
+            self.bulletinManager.displayNextItem()
+        }
+        bulletinItem.alternativeHandler = { (item: BLTNActionItem) in
+            self.bulletinManager.displayNextItem()
+        }
+        
     }
     
     func setupConstraints() {
