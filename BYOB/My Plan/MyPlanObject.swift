@@ -5,7 +5,6 @@
 //  Created by Trevor Smith on 9/3/19.
 //  Copyright © 2019 Trevor Smith. All rights reserved.
 //
-import UIKit
 import SwiftDate
 
 class MyPlanObject: Codable {

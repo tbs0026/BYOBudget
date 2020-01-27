@@ -17,7 +17,7 @@ class ExpensesController: UIViewController, UITableViewDelegate, UITableViewData
     var addButton = UIButton()
     
     func setupAddButton() {
-        addButton.backgroundColor = .systemBlue
+        addButton.backgroundColor = .mint
         addButton.layer.cornerRadius = 40
         addButton.setTitle("+", for: .normal)
         addButton.titleLabel?.font = UIFont(name: "Avenir-Black", size: 80)
@@ -26,6 +26,7 @@ class ExpensesController: UIViewController, UITableViewDelegate, UITableViewData
         addButton.addTarget(self, action: #selector(self.addPressedDown), for: .touchDown)
         addButton.addTarget(self, action: #selector(self.addPressedUp), for: .touchDragOutside)
         addButton.addTarget(self, action: #selector(self.addPressedUp), for: .touchUpInside)
+        addButton.addTarget(self, action: #selector(self.createNewExpense), for: .touchUpInside)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -42,6 +43,12 @@ class ExpensesController: UIViewController, UITableViewDelegate, UITableViewData
     
     @objc func addPressedUp() {
         addButton.addDropShadow(opacity: 0.5)
+    }
+    
+    @objc func createNewExpense() {
+        let expenseObject = ExpenseObject(titleIn: "", amountIn: 0, epochIn: "", categoryIn: "")
+        let expensesDetail = ExpensesDetail(expenseObject: expenseObject)
+        navigationController?.present(expensesDetail, animated: true, completion: nil)
     }
     
     func setupConstraints() {
