@@ -14,7 +14,7 @@ class MyPlanObject: Codable {
     var dateEdited = Date()
     var epoch = String()
     var amountSpent: Double
-    
+
     init(titleIn: String, maxAmountIn: Double, monthly: Bool, amountSpentIn: Double, epochIn: String) {
         self.title = titleIn
         self.maxAmount = maxAmountIn
@@ -23,6 +23,5 @@ class MyPlanObject: Codable {
         self.amountSpent = amountSpentIn
         self.epoch = epochIn
     }
-    
-    
+
 }

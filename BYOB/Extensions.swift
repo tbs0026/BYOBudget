@@ -10,17 +10,48 @@ import UIKit
 import SystemConfiguration
 import UserNotifications
 
-class staticFunctions {
-    
-    static func getMonthlyKey() -> String {
+class StaticFunctions {
+
+    static func getMonthlyMyPlanKey() -> String {
         let thisMonth = Date().monthName(.default)
-        let thisMonthKey = "MyPlanArray\(thisMonth)"
+        let thisYear = Date().year
+        let thisMonthKey = "MyPlanArray\(thisMonth)\(thisYear)"
+        print("\(thisMonthKey)")
         return thisMonthKey
     }
-    
+
+    static func getMonthlyExpensesKey() -> String {
+        let thisMonth = Date().monthName(.default)
+        let thisYear = Date().year
+        let thisMonthKey = "ExpenseArray\(thisMonth)\(thisYear)"
+        return thisMonthKey
+    }
+
+    static func decodeGroupArray() -> [MyPlanObject] {
+        var array: [MyPlanObject] = []
+        if let JSONStringIn = UserDefaults.standard.string(forKey: getMonthlyMyPlanKey()) {
+            if let JSONData = JSONStringIn.data(using: .utf8) {
+                let cachedArray = try? JSONDecoder().decode([MyPlanObject].self, from: JSONData)
+                array = cachedArray ?? []
+            }
+        }
+        return array
+    }
+
+    static func decodeExpenseArray() -> [ExpenseObject] {
+        var array: [ExpenseObject] = []
+        if let JSONStringIn = UserDefaults.standard.string(forKey: getMonthlyExpensesKey()) {
+            if let JSONData = JSONStringIn.data(using: .utf8) {
+                let cachedArray = try? JSONDecoder().decode([ExpenseObject].self, from: JSONData)
+                array = cachedArray ?? []
+            }
+        }
+        return array
+    }
+
     static func getTotalMaxBudget() -> Double {
         var array: [MyPlanObject] = []
-        if let JSONStringIn = UserDefaults.standard.string(forKey: getMonthlyKey()) {
+        if let JSONStringIn = UserDefaults.standard.string(forKey: getMonthlyMyPlanKey()) {
             if let JSONData = JSONStringIn.data(using: .utf8) {
                 let cachedArray = try? JSONDecoder().decode([MyPlanObject].self, from: JSONData)
                 array = cachedArray ?? []
@@ -32,10 +63,10 @@ class staticFunctions {
         }
         return amount
     }
-    
+
     static func getTotalAmountSpent() -> Double {
         var array: [MyPlanObject] = []
-        if let JSONStringIn = UserDefaults.standard.string(forKey: getMonthlyKey()) {
+        if let JSONStringIn = UserDefaults.standard.string(forKey: getMonthlyMyPlanKey()) {
             if let JSONData = JSONStringIn.data(using: .utf8) {
                 let cachedArray = try? JSONDecoder().decode([MyPlanObject].self, from: JSONData)
                 array = cachedArray ?? []
@@ -55,23 +86,23 @@ extension UIColor {
         if hex.hasPrefix("#") {
             let start = hex.index(hex.startIndex, offsetBy: 1)
             let hexColor = String(hex[start...])
-            
+
             if hexColor.count == 8 {
                 let scanner = Scanner(string: hexColor)
                 var hexNumber: UInt64 = 0
-                
+
                 if scanner.scanHexInt64(&hexNumber) {
                     r = CGFloat((hexNumber & 0xff000000) >> 24) / 255
                     g = CGFloat((hexNumber & 0x00ff0000) >> 16) / 255
                     b = CGFloat((hexNumber & 0x0000ff00) >> 8) / 255
                     a = CGFloat(hexNumber & 0x000000ff) / 255
-                    
+
                     self.init(red: r, green: g, blue: b, alpha: a)
                     return
                 }
             }
         }
-        
+
         return nil
     }
 }
@@ -89,7 +120,7 @@ extension UIDevice {
             guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
-        
+
         func mapToDevice(identifier: String) -> String {
             #if os(iOS)
             switch identifier {
@@ -145,7 +176,7 @@ extension UIDevice {
             }
             #endif
         }
-        
+
         return mapToDevice(identifier: identifier)
     }()
 }
@@ -161,7 +192,7 @@ extension UIView {
 }
 
 extension UIViewController {
-    
+
     func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             //print("User Notification settings: (settings)")
@@ -171,13 +202,13 @@ extension UIViewController {
             }
         }
     }
-    
-    func requestNotificationAuthorization(){
+
+    func requestNotificationAuthorization() {
         // Request for permissions
         UNUserNotificationCenter.current()
             .requestAuthorization(
             options: [.alert, .sound, .badge]) {
-                [weak self] granted, error in
+                [weak self] granted, _ in
                 //print("Notification granted: (granted)")
                 guard granted else { return }
                 self?.getNotificationSettings()

@@ -99,14 +99,14 @@ import UIKit
 
         let actionButton = HighlightButton()
         actionButton.cornerRadius = appearance.actionButtonCornerRadius
-        
+
         if let actionButtonImage = appearance.actionButtonImage {
             actionButton.setBackgroundImage(actionButtonImage, for: .normal)
-            
+
         } else {
             actionButton.setBackgroundColor(appearance.actionButtonColor, forState: .normal)
         }
-        
+
         actionButton.setTitleColor(appearance.actionButtonTitleColor, for: .normal)
         actionButton.contentHorizontalAlignment = .center
 

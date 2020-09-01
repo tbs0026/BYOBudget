@@ -65,7 +65,7 @@ class BulletinDismissAnimationController: NSObject, UIViewControllerAnimatedTran
             backgroundView.hide()
         }
 
-        UIView.animate(withDuration: duration, delay: 0, options: options, animations: animations) { finished in
+        UIView.animate(withDuration: duration, delay: 0, options: options, animations: animations) { _ in
 
             let isCancelled = transitionContext.transitionWasCancelled
 

@@ -14,7 +14,7 @@ class ExpenseObject: Codable {
     var dateEdited = Date()
     var epoch = String()
     var amountSpent: Double
-    
+
     init(titleIn: String, amountIn: Double, epochIn: String, categoryIn: String) {
         self.title = titleIn
         self.amountSpent = amountIn

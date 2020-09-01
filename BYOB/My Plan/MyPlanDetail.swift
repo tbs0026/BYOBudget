@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import M13Checkbox
 
-class MyPlanDetail: UIViewController, UITextFieldDelegate{
+class MyPlanDetail: UIViewController, UITextFieldDelegate {
     let keyboardToolbar = UIToolbar()
     let titleTextField = UITextField()
     let amountTextField = UITextField()
@@ -20,12 +20,11 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     var isMonthly = false
     var cancelButton = UIBarButtonItem()
     var saveButton = UIBarButtonItem()
-    lazy var monthlyKey = getMonthlyKey()
+    lazy var monthlyKey = StaticFunctions.getMonthlyMyPlanKey()
     var indexKey = "MyPlanIndex"
     var epoch = ""
     var amountSpent: Double = 0
-    
-    
+
     override func viewDidLoad() {
         title = "My Plan"
         cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(self.cancelPressed))
@@ -43,13 +42,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         setupAmount()
         setupMonthlyCheckbox()
     }
-    
-    func getMonthlyKey() -> String {
-        let thisMonth = Date().monthName(.default)
-        let thisMonthKey = "MyPlanArray\(thisMonth)"
-        return thisMonthKey
-    }
-    
+
     init(itemIn: MyPlanObject) {
         super.init(nibName: nil, bundle: nil)
         if #available(iOS 13.0, *) {
@@ -68,11 +61,11 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func setupTitle() {
         if titleTextField.text == "" {
             titleTextField.attributedPlaceholder = NSAttributedString(string: "Enter Title")
@@ -85,7 +78,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         titleTextField.borderStyle = .roundedRect
         titleTextField.inputAccessoryView = keyboardToolbar
     }
-    
+
     func setupMonthlyCheckbox() {
         monthlyLabel.text = "Make this a monthly budgeted item"
         monthlyLabel.textColor = .darkGray
@@ -97,7 +90,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
             monthlyCheckbox.checkState = .checked
         }
         }
-    
+
     func setupAmount() {
         if amountTextField.text == "0.0"{
             amountTextField.text = ""
@@ -112,7 +105,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         amountTextField.inputAccessoryView = keyboardToolbar
         amountTextField.keyboardType = .decimalPad
     }
-    
+
     func setupKeyboard() {
         keyboardToolbar.sizeToFit()
         keyboardToolbar.barTintColor = UIColor(hex: "#eeeeeeff")
@@ -125,40 +118,40 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         keyboardToolbar.layer.borderColor = UIColor(hex: "#eeeeeeff")?.cgColor
         keyboardToolbar.clipsToBounds = true
     }
-    
+
     @objc func dismissKeyboard() {
         self.view.endEditing(true)
     }
-    
+
     func setupConstraints() {
-        titleTextField.snp.makeConstraints{ (make) in
+        titleTextField.snp.makeConstraints { (make) in
             make.top.left.equalToSuperview().offset(8)
             make.right.equalToSuperview().offset(-8)
             make.height.equalTo(50)
         }
-        
-        amountTextField.snp.makeConstraints{ (make) in
+
+        amountTextField.snp.makeConstraints { (make) in
             make.top.equalTo(titleTextField.snp.bottom).offset(8)
             make.left.equalToSuperview().offset(8)
             make.right.equalToSuperview().offset(-8)
             make.height.equalTo(50)
         }
-        
-        monthlyLabel.snp.makeConstraints{ (make) in
+
+        monthlyLabel.snp.makeConstraints { (make) in
             make.top.equalTo(amountTextField.snp.bottom).offset(26)
             make.left.equalTo(monthlyCheckbox.snp.right).offset(4)
         }
-        
-        monthlyCheckbox.snp.makeConstraints{ (make) in
+
+        monthlyCheckbox.snp.makeConstraints { (make) in
             make.top.equalTo(amountTextField.snp.bottom).offset(16)
             make.left.equalToSuperview().offset(16)
             make.height.width.equalTo(40)
         }
     }
-    
+
     func cancelAlert() {
         let alert = UIAlertController(title: "You have unsaved changes", message: "Would you like to save this plan?", preferredStyle: .alert)
-        
+
         let saveAction = UIAlertAction(title: "Save", style: .default, handler: { (_) in
             self.savePressed()
         })
@@ -168,23 +161,23 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         let cancelAction = UIAlertAction(title: "No", style: .default, handler: { (_) in
             self.navigationController?.popViewController(animated: true)
         })
-        
+
         alert.addAction(cancelAction)
         alert.addAction(editAction)
         alert.addAction(saveAction)
         self.present(alert, animated: true)
     }
-    
+
     @objc func cancelPressed() {
-        
+
         self.view.endEditing(true)
-        if currentObject.title != titleTextField.text || currentObject.maxAmount != Double(amountTextField.text!){
+        if currentObject.title != titleTextField.text || currentObject.maxAmount != Double(amountTextField.text!) {
             cancelAlert()
         } else {
             self.navigationController?.popViewController(animated: true)
         }
     }
-    
+
     @objc func savePressed() {
         currentObject.maxAmount = Double(amountTextField.text!) ?? 0.0
         currentObject.title = titleTextField.text ?? "New Budget Item"
@@ -197,27 +190,27 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
         appendToCachedArray(myPlanObject: currentObject)
         self.navigationController?.popViewController(animated: true)
     }
-    
+
     func sendSameTitlePopup() {
         let alert = UIAlertController(title: "You already have an item with this title", message: "Please rename this item or edit the item named \(titleTextField.text!)", preferredStyle: .alert)
-        
+
         let closeAlert = UIAlertAction(title: "Close", style: .default, handler: { (_) in
             alert.dismiss(animated: true, completion: nil)
         })
         alert.addAction(closeAlert)
         self.present(alert, animated: true)
     }
-    
+
     func sendEmptyFieldPopup() {
         let alert = UIAlertController(title: "Your Title or Amount field appear to be empty", message: "Please enter a value for these fields", preferredStyle: .alert)
-        
+
         let editAction = UIAlertAction(title: "Okay", style: .default, handler: { (_) in
             alert.dismiss(animated: true, completion: nil)
         })
         alert.addAction(editAction)
         self.present(alert, animated: true)
     }
-    
+
     func appendToCachedArray(myPlanObject: MyPlanObject) {
         var checkNew = true
         var array: [MyPlanObject] = []
@@ -225,7 +218,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
             if let jsonDataIn = jsonStringIn.data(using: .utf8) {
                 let myPlanArray = try? JSONDecoder().decode([MyPlanObject].self, from: jsonDataIn)
                 array = myPlanArray ?? []
-                
+
                 // checks if the array contains the item, if it does, checkNew = false
                 if jsonStringIn.contains(myPlanObject.epoch) {
                     checkNew = false
@@ -235,7 +228,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
                 }
             }
         }
-        
+
         // appends the item to the array if it is new, and if it is not
         if checkNew {
             array.append(myPlanObject)
@@ -246,7 +239,7 @@ class MyPlanDetail: UIViewController, UITextFieldDelegate{
             array.remove(at: index)
             array.append(myPlanObject)
         }
-        
+
         // caches the OCVNoteObject
         if let jsonDataOut = try? JSONEncoder().encode(array.self) {
             if let jsonString = String(data: jsonDataOut, encoding: .utf8) {

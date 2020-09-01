@@ -10,9 +10,9 @@ import UIKit
 import SnapKit
 
 class MyPlanCell: UITableViewCell {
-    
+
     static let reuse = "MyPlanCell"
-    
+
     let card: UIView = {
         $0.backgroundColor = UIColor(hex: "#ffffffff")
         $0.layer.cornerRadius = 12
@@ -22,22 +22,17 @@ class MyPlanCell: UITableViewCell {
         $0.layer.shadowRadius = 3
         return $0
     }(UIView())
-    
-//    init(titleIn: String, amountIn: Double) {
-//        super.init(style: .default, reuseIdentifier: "MyPlanCell")
-//        setupCell(titleIn: titleIn, amountIn: amountIn)
-//    }
-    
+
     var title: UILabel = {
         $0.font = UIFont(name: "Avenir-HeavyOblique", size: 16)
         return $0
-    } (UILabel())
-    
+    }(UILabel())
+
     var amount: UILabel = {
         $0.font = UIFont(name: "Avenir-MediumOblique", size: 14)
         return $0
-    } (UILabel())
-    
+    }(UILabel())
+
     func setupCell(titleIn: String, amountIn: Double) {
         self.backgroundColor = UIColor(hex: "#eeeeeeff")
         let formatter = NumberFormatter()
@@ -54,29 +49,23 @@ class MyPlanCell: UITableViewCell {
         card.snp.removeConstraints()
         card.subviews.forEach { $0.snp.removeConstraints() }
         setupConstraints()
-        
     }
-    
-    func setupVariables() {
-    }
-    
+
     func setupConstraints() {
         card.snp.makeConstraints { (make) in
             make.edges.equalToSuperview().inset(8)
-            
         }
-        
+
         title.snp.makeConstraints { (make) in
             make.left.equalToSuperview().inset(4)
             make.centerY.equalToSuperview()
             make.height.equalTo(20)
         }
-        
+
         amount.snp.makeConstraints { (make) in
             make.right.equalToSuperview().inset(4)
             make.centerY.equalToSuperview()
             make.height.equalTo(20)
         }
-        
     }
 }
